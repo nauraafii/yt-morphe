@@ -2,6 +2,10 @@
 
 set -e
 
+PROJECT_NAME="ytrvx-module"
+PROJECT_REPO="https://github.com/nauraafii/ytrvx-module"
+DOWNLOAD_DIR="/sdcard/Download/${PROJECT_NAME}"
+
 pr() { echo -e "\033[0;32m[+] ${1}\033[0m"; }
 ask() {
 	local y
@@ -24,50 +28,47 @@ until
 	yes | termux-setup-storage >/dev/null 2>&1
 	ls /sdcard >/dev/null 2>&1
 do sleep 1; done
-if [ ! -f ~/.rvmm_"$(date '+%Y%m')" ]; then
+if [ ! -f ~/.ytrvx_"$(date '+%Y%m')" ]; then
 	pr "Setting up environment..."
 	yes "" | pkg update -y && pkg upgrade -y && pkg install -y git curl jq openjdk-21 zip
-	: >~/.rvmm_"$(date '+%Y%m')"
+	: >~/.ytrvx_"$(date '+%Y%m')"
 fi
-mkdir -p /sdcard/Download/revanced-magisk-module/
+mkdir -p "$DOWNLOAD_DIR"
 
-if [ -d revanced-magisk-module ] || [ -f config.toml ]; then
-	if [ -d revanced-magisk-module ]; then cd revanced-magisk-module; fi
-	pr "Checking for revanced-magisk-module updates"
+if [ -d "$PROJECT_NAME" ] || [ -f config.toml ]; then
+	if [ -d "$PROJECT_NAME" ]; then cd "$PROJECT_NAME"; fi
+	pr "Checking for ${PROJECT_NAME} updates"
 	git fetch
 	if git status | grep -q 'is behind\|fatal'; then
-		pr "revanced-magisk-module is not synced with upstream."
-		pr "Cloning revanced-magisk-module. config.toml will be preserved."
+		pr "${PROJECT_NAME} is not synced with upstream."
+		pr "Cloning ${PROJECT_NAME}. config.toml will be preserved."
 		cd ..
-		cp -f revanced-magisk-module/config.toml .
-		rm -rf revanced-magisk-module
-		git clone https://github.com/j-hc/revanced-magisk-module --recurse --depth 1
-		mv -f config.toml revanced-magisk-module/config.toml
-		cd revanced-magisk-module
+		cp -f "$PROJECT_NAME/config.toml" .
+		rm -rf "$PROJECT_NAME"
+		git clone "$PROJECT_REPO" --recurse --depth 1 "$PROJECT_NAME"
+		mv -f config.toml "$PROJECT_NAME/config.toml"
+		cd "$PROJECT_NAME"
 	fi
 else
-	pr "Cloning revanced-magisk-module."
-	git clone https://github.com/j-hc/revanced-magisk-module --depth 1
-	cd revanced-magisk-module
+	pr "Cloning ${PROJECT_NAME}."
+	git clone "$PROJECT_REPO" --recurse --depth 1 "$PROJECT_NAME"
+	cd "$PROJECT_NAME"
 	sed -i '/^enabled.*/d; /^\[.*\]/a enabled = false' config.toml
-	grep -q 'revanced-magisk-module' ~/.gitconfig 2>/dev/null ||
-		git config --global --add safe.directory ~/revanced-magisk-module
+	grep -q "$PROJECT_NAME" ~/.gitconfig 2>/dev/null ||
+		git config --global --add safe.directory "$HOME/$PROJECT_NAME"
 fi
 
-[ -f ~/storage/downloads/revanced-magisk-module/config.toml ] ||
-	cp config.toml ~/storage/downloads/revanced-magisk-module/config.toml
+[ -f "$DOWNLOAD_DIR/config.toml" ] ||
+	cp config.toml "$DOWNLOAD_DIR/config.toml"
 
-if ask "Open rvmm-config-gen to generate a config?"; then
-	am start -a android.intent.action.VIEW -d https://j-hc.github.io/rvmm-config-gen/
-fi
 printf "\n"
 until
 	if ask "Open 'config.toml' to configure builds?\nAll are disabled by default, you will need to enable at first time building"; then
-		am start -a android.intent.action.VIEW -d file:///sdcard/Download/revanced-magisk-module/config.toml -t text/plain
+		am start -a android.intent.action.VIEW -d "file://${DOWNLOAD_DIR}/config.toml" -t text/plain
 	fi
 	ask "Setup is done. Do you want to start building?"
 do :; done
-cp -f ~/storage/downloads/revanced-magisk-module/config.toml config.toml
+cp -f "$DOWNLOAD_DIR/config.toml" config.toml
 
 ./build.sh
 
@@ -78,10 +79,10 @@ for op in *; do
 		pr "glob fail"
 		exit 1
 	}
-	mv -f "${PWD}/${op}" ~/storage/downloads/revanced-magisk-module/"${op}"
+	mv -f "${PWD}/${op}" "$DOWNLOAD_DIR/${op}"
 done
 
-pr "Outputs are available in /sdcard/Download/revanced-magisk-module folder"
-am start -a android.intent.action.VIEW -d file:///sdcard/Download/revanced-magisk-module -t resource/folder
+pr "Outputs are available in ${DOWNLOAD_DIR}"
+am start -a android.intent.action.VIEW -d "file://${DOWNLOAD_DIR}" -t resource/folder
 sleep 2
-am start -a android.intent.action.VIEW -d file:///sdcard/Download/revanced-magisk-module -t resource/folder
+am start -a android.intent.action.VIEW -d "file://${DOWNLOAD_DIR}" -t resource/folder

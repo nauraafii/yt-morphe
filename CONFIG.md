@@ -25,6 +25,7 @@ patches-source = "MorpheApp/morphe-patches" # where to fetch patches bundle from
 cli-source = "MorpheApp/morphe-desktop"     # where to fetch CLI from. default: "MorpheApp/morphe-desktop"
 # options like cli-source can also set per app
 rv-brand = "YTRVX" # label used in the generated module and APK filenames. default: "YTRVX"
+module-author = "Naufal" # author shown in generated Magisk module metadata. default: "Naufal"
 
 patches-version = "v1.40.0" # 'latest', 'dev', or a version number. default: "latest"
 cli-version = "v1.14.0"     # 'latest', 'dev', or a version number. default: "latest"
@@ -57,6 +58,7 @@ exclusive-patches = false                                  # exclude all patches
 apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 uptodown-dlurl = "https://spotify.en.uptodown.com/android"
 module-prop-name = "some-app-magisk"                       # magisk module prop name.
+module-author = "Naufal"                                    # overrides the global module author for this app.
 dpi = "360-480dpi"                               # used to select apk variant from apkmirror. default: nodpi
 arch = "arm64-v8a"                                         # 'arm64-v8a', 'arm-v7a', 'all', 'both'. 'both' downloads both arm64-v8a and arm-v7a. default: all
 riplib = true                                              # enables ripping x86 and x86_64 libs from apks with j-hc revanced cli. default: true
