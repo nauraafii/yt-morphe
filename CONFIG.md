@@ -49,7 +49,11 @@ Versi patcher dapat berupa nomor versi, `latest`, atau `dev`. Konfigurasi YTRVX 
 | `version` | Versi aplikasi: nomor versi, `auto`, `latest`, atau `beta`. |
 | `arch` | `all`, `arm64-v8a`, `arm-v7a`, atau `both`. |
 | `uptodown-dlurl`, `apkmirror-dlurl`, `archive-dlurl` | Sumber unduhan APK. Minimal satu sumber diperlukan. |
-| `included-patches` / `excluded-patches` | Patch yang ingin ditambah atau dilewati. |
+| `included-patches` / `excluded-patches` | Patch yang ingin ditambah atau dilewati. Jika dipakai, tetapkan `version` secara eksplisit. |
+| `exclusive-patches` | Hanya memakai patch yang dipilih. Tetapkan `version` secara eksplisit. |
+| `include-stock` | Menyertakan APK stok ke ZIP modul. Lebih tahan saat instalasi, tetapi ukuran ZIP bertambah. |
+| `module-author` | Mengganti nama pembuat pada metadata modul tertentu. |
+| `riplib` | Menghapus library ABI yang tidak dipakai untuk mengurangi ukuran file. |
 | `patcher-args` | Opsi tambahan untuk Morphe Patcher. |
 | `module-prop-name` | ID modul Magisk. Jangan ubah pada modul yang sudah dipasang jika ingin mempertahankan jalur update. |
 
@@ -72,6 +76,6 @@ enabled = false
 ## Catatan patch
 
 - Nama patch yang mengandung tanda petik satu harus ditulis dua kali, misalnya `Hide ''Get Music Premium''`.
-- `auto` memilih versi tertinggi yang didukung oleh patch aktif.
+- `auto` memilih versi tertinggi yang didukung oleh patch default. Jika memilih atau mengecualikan patch sendiri, gunakan versi aplikasi yang eksplisit agar kompatibilitas tidak ditebak.
 - `latest` dan `beta` tidak memeriksa kecocokan patch terlebih dahulu; gunakan hanya jika Anda siap menangani build yang gagal.
 - Detail CLI dan bundle `.mpp` tersedia di [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop) dan [Morphe Patches](https://github.com/MorpheApp/morphe-patches).
