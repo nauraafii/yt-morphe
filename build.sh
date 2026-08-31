@@ -61,10 +61,21 @@ for file in "$TEMP_DIR"/*/changelog.md; do
 done
 
 mkdir -p ${MODULE_TEMPLATE_DIR}/bin/arm64 ${MODULE_TEMPLATE_DIR}/bin/arm ${MODULE_TEMPLATE_DIR}/bin/x86 ${MODULE_TEMPLATE_DIR}/bin/x64
-gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm64/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-arm64-v8a"
-gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-armeabi-v7a"
-gh_dl "${MODULE_TEMPLATE_DIR}/bin/x86/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86"
-gh_dl "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86_64"
+verify_sha256() {
+	local file=$1 expected=$2 actual
+	actual=$(sha256sum "$file" | awk '{print $1}')
+	[ "$actual" = "$expected" ] || abort "checksum verification failed for '$file'"
+}
+CMPR_RELEASE=20240303
+gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm64/cmpr" "https://github.com/j-hc/cmpr/releases/download/${CMPR_RELEASE}/cmpr-arm64-v8a"
+verify_sha256 "${MODULE_TEMPLATE_DIR}/bin/arm64/cmpr" "ef7abdea70c69c64e353807ec89d4a81e36b832c99d2874ff97d00f0609bc7a1"
+gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm/cmpr" "https://github.com/j-hc/cmpr/releases/download/${CMPR_RELEASE}/cmpr-armeabi-v7a"
+verify_sha256 "${MODULE_TEMPLATE_DIR}/bin/arm/cmpr" "da273d0c7fbc66a5a5d30e7e5f1fb3d505d5ea64da6cff4973f32bfc1507fbb1"
+gh_dl "${MODULE_TEMPLATE_DIR}/bin/x86/cmpr" "https://github.com/j-hc/cmpr/releases/download/${CMPR_RELEASE}/cmpr-x86"
+verify_sha256 "${MODULE_TEMPLATE_DIR}/bin/x86/cmpr" "aaa7abd1f7eb6c3ba23324294fc7a5f1082771e9d86d8fd9545369d0e179a06e"
+gh_dl "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "https://github.com/j-hc/cmpr/releases/download/${CMPR_RELEASE}/cmpr-x86_64"
+verify_sha256 "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "9d79e54ab78b0b85da9f121ec7a93efbb14aebbf48bc04712d90b67bfdc95e3e"
+chmod 755 "${MODULE_TEMPLATE_DIR}"/bin/*/cmpr
 
 declare -A cliriplib
 idx=0

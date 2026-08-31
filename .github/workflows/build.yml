@@ -9,6 +9,10 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: ytrvx-release
+  queue: max
+
 jobs:
   run:
     permissions:
@@ -45,12 +49,25 @@ jobs:
           if [ -z "$TAG" ]; then TAG=0; fi
           echo "NEXT_VER_CODE=$((TAG + 1))" >> $GITHUB_OUTPUT
 
+      - name: Prepare signing key
+        env:
+          YTRVX_KEYSTORE_B64: ${{ secrets.YTRVX_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$YTRVX_KEYSTORE_B64" ]; then
+            echo "YTRVX signing key secret is not configured."
+            exit 1
+          fi
+          printf '%s' "$YTRVX_KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/ytrvx-release.p12"
+          chmod 600 "$RUNNER_TEMP/ytrvx-release.p12"
+
       - name: Build modules/APKs
         run: if [ -f "config.json" ]; then ./build.sh config.json; else ./build.sh config.toml; fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: $GITHUB_REPOSITORY
           NEXT_VER_CODE: ${{ steps.next_ver_code.outputs.NEXT_VER_CODE }}
+          YTRVX_KEYSTORE_PATH: ${{ runner.temp }}/ytrvx-release.p12
+          YTRVX_KEYSTORE_PASSWORD: ${{ secrets.YTRVX_KEYSTORE_PASSWORD }}
 
       - name: Get output
         id: get_output
@@ -60,6 +77,9 @@ jobs:
           cat build.md >> "$GITHUB_OUTPUT"
           echo "${DELIM}" >> "$GITHUB_OUTPUT"
           cp -f build.md build.tmp
+
+      - name: Generate checksums
+        run: sha256sum ./build/* > ./build/SHA256SUMS.txt
 
       - name: Upload modules to release
         env:
@@ -88,6 +108,8 @@ jobs:
           }"
           }
 
+          find . -maxdepth 1 -type f -name "*-update.json" -delete
+
           cd build || { echo "build folder not found"; exit 1; }
           for OUTPUT in *magisk*.zip; do
             [ "$OUTPUT" = "*magisk*.zip" ] && continue
@@ -101,13 +123,13 @@ jobs:
           done
           cd ..
 
-          find . -name "*-update.json" | grep . || : >dummy-update.json
-
       - name: Commit update metadata
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add build.md *-update.json
+          git add -A -- build.md
+          git ls-files -z -- "*-update.json" | xargs -0 -r git add -u --
+          find . -maxdepth 1 -type f -name "*-update.json" -print0 | xargs -0 -r git add --
           if git diff --cached --quiet; then
             echo "No update metadata changes to commit."
           else

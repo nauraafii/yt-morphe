@@ -98,7 +98,10 @@ install() {
 			if echo "$op" | grep -q -e INSTALL_FAILED_VERSION_DOWNGRADE -e INSTALL_FAILED_UPDATE_INCOMPATIBLE; then
 				ui_print "* Handling install error"
 				pmex uninstall-system-updates "$PKG_NAME"
-				BASEPATH=$(pmex path "$PKG_NAME") || abort
+				if ! BASEPATH=$(pmex path "$PKG_NAME"); then
+					install_err="ERROR: unable to find $PKG_NAME after removing system updates"
+					break
+				fi
 				BASEPATH=${BASEPATH##*:} BASEPATH=${BASEPATH%/*}
 				if [ "${BASEPATH:1:4}" != data ]; then IS_SYS=true; fi
 				if [ "$IS_SYS" = true ]; then

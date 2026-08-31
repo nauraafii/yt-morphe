@@ -12,6 +12,7 @@ Ambil file terbaru di [Releases](https://github.com/nauraafii/ytrvx-module/relea
 - **APK**: untuk perangkat tanpa root. Pasang seperti APK biasa. Login Google memerlukan GmsCore yang kompatibel.
 - **ZIP Magisk/KernelSU**: untuk perangkat root. Pasang melalui aplikasi root manager yang digunakan.
 - Pilih file sesuai arsitektur perangkat. File dengan nama `all` mendukung beberapa arsitektur.
+- Rilis baru menyertakan `SHA256SUMS.txt`; cocokkan file dengannya sebelum memasang file.
 
 ## Build sendiri
 
@@ -20,12 +21,13 @@ Ambil file terbaru di [Releases](https://github.com/nauraafii/ytrvx-module/relea
 3. Pilih **Run workflow** pada branch `main`.
 4. Setelah selesai, ambil hasilnya dari halaman Releases.
 
-Untuk build lokal, gunakan Java 21 atau lebih baru. Panduan opsi tersedia di [CONFIG.md](CONFIG.md).
+Untuk build lokal, gunakan Java 21 atau lebih baru dan siapkan keystore milik sendiri melalui variabel `YTRVX_KEYSTORE_PATH` dan `YTRVX_KEYSTORE_PASSWORD`. Jangan simpan keystore atau kata sandi di repository. Panduan opsi tersedia di [CONFIG.md](CONFIG.md).
 
 ## Catatan
 
 - YTRVX adalah proyek pribadi dan bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc.
 - Kompatibilitas dapat berubah ketika aplikasi sumber atau patch diperbarui.
+- Android tidak mengizinkan APK dengan signature berbeda dipasang menimpa aplikasi yang sudah ada. Bila itu terjadi, uninstall APK YTRVX lama dahulu lalu instal ulang; data aplikasi dapat ikut terhapus.
 - Issues hanya untuk masalah builder YTRVX atau file hasil build, bukan permintaan atau bug patch Morphe.
 
 ## Kredit

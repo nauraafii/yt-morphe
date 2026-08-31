@@ -244,25 +244,8 @@ semver_validate() {
 	[ ${#ac} = 0 ]
 }
 get_patch_last_supported_ver() {
-	local list_patches=$1 pkg_name=$2 inc_sel=$3 _exc_sel=$4 _exclusive=$5 # TODO: resolve using all of these
+	local pkg_name=$1
 	local op
-	if [ "$inc_sel" ]; then
-		if ! op=$(awk '{$1=$1}1' <<<"$list_patches"); then
-			epr "list-patches: '$op'"
-			return 1
-		fi
-		local ver vers="" NL=$'\n'
-		while IFS= read -r line; do
-			line="${line:1:${#line}-2}"
-			ver=$(sed -n "/^Name: $line\$/,/^\$/p" <<<"$op" | sed -n "/^Compatible versions:\$/,/^\$/p" | tail -n +2)
-			vers=${ver}${NL}
-		done <<<"$(list_args "$inc_sel")"
-		vers=$(awk '{$1=$1}1' <<<"$vers")
-		if [ "$vers" ]; then
-			get_highest_ver <<<"$vers"
-			return
-		fi
-	fi
 	op=$(java -jar "$cli_jar" list-versions --patches "$patches_jar" -f "$pkg_name" 2>&1 | tail -n +3 | awk '{$1=$1}1')
 	if [ "$op" = "Any" ]; then return; fi
 	pcount=$(head -1 <<<"$op") pcount=${pcount#*(} pcount=${pcount% *}
@@ -459,9 +442,15 @@ get_archive_pkg_name() { echo "$__ARCHIVE_PKG_NAME__"; }
 
 patch_apk() {
 	local stock_input=$1 patched_apk=$2 patcher_args=$3 cli_jar=$4 patches_jar=$5
+	if [ -z "${YTRVX_KEYSTORE_PATH-}" ] || [ -z "${YTRVX_KEYSTORE_PASSWORD-}" ]; then
+		abort "YTRVX signing key is not configured. Set YTRVX_KEYSTORE_PATH and YTRVX_KEYSTORE_PASSWORD."
+	fi
+	if [ ! -f "$YTRVX_KEYSTORE_PATH" ]; then
+		abort "YTRVX signing key was not found at the configured path."
+	fi
 	# Morphe purges scratch files by default; its CLI has no --purge flag.
-	local cmd="env -u GITHUB_REPOSITORY java -jar '$cli_jar' patch '$stock_input' -o '$patched_apk' -p '$patches_jar' --keystore=ks.keystore \
---keystore-entry-password=123456789 --keystore-password=123456789 --signer=jhc --keystore-entry-alias=jhc $patcher_args"
+	local cmd="env -u GITHUB_REPOSITORY java -jar '$cli_jar' patch '$stock_input' -o '$patched_apk' -p '$patches_jar' --keystore=\"\$YTRVX_KEYSTORE_PATH\" \
+--keystore-entry-password=\"\$YTRVX_KEYSTORE_PASSWORD\" --keystore-password=\"\$YTRVX_KEYSTORE_PASSWORD\" --signer=ytrvx --keystore-entry-alias=ytrvx $patcher_args"
 	if [ "$OS" = Android ]; then cmd+=" --custom-aapt2-binary='${AAPT2}'"; fi
 	pr "$cmd"
 	if eval "$cmd"; then [ -f "$patched_apk" ]; else
@@ -518,8 +507,10 @@ build_rv() {
 
 	local get_latest_ver=false
 	if [ "$version_mode" = auto ]; then
-		if ! version=$(get_patch_last_supported_ver "$list_patches" "$pkg_name" \
-			"${args[included_patches]}" "${args[excluded_patches]}" "${args[exclusive_patches]}"); then
+		if [ "${args[included_patches]}" ] || [ "${args[excluded_patches]}" ] || [ "${args[exclusive_patches]}" = true ]; then
+			abort "version='auto' cannot be used with custom patch selection for '$table'. Set an explicit supported version."
+		fi
+		if ! version=$(get_patch_last_supported_ver "$pkg_name"); then
 			exit 1
 		elif [ -z "$version" ]; then get_latest_ver=true; fi
 	elif isoneof "$version_mode" latest beta; then
@@ -634,7 +625,7 @@ build_rv() {
 		local base_template
 		base_template=$(mktemp -d -p "$TEMP_DIR")
 		cp -a $MODULE_TEMPLATE_DIR/. "$base_template"
-		local upj="${table,,}-update.json"
+		local upj="${args[module_prop_name]}-update.json"
 
 		module_config "$base_template" "$pkg_name" "$version" "$arch"
 
