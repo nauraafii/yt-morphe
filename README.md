@@ -12,7 +12,7 @@ Ambil file terbaru di [Releases](https://github.com/nauraafii/ytrvx-module/relea
 - **APK**: untuk perangkat tanpa root. Pasang seperti APK biasa. Login Google memerlukan GmsCore yang kompatibel.
 - **ZIP Magisk/KernelSU**: untuk perangkat root. Pasang melalui aplikasi root manager yang digunakan.
 - Pilih file sesuai arsitektur perangkat. File dengan nama `all` mendukung beberapa arsitektur.
-- Rilis baru menyertakan `SHA256SUMS.txt`; cocokkan file dengannya sebelum memasang file.
+- Rilis baru menyertakan `SHA256SUMS.txt`. Unduh bersama file pilihan Anda, lalu jalankan `sha256sum -c SHA256SUMS.txt` sebelum memasang file.
 
 ## Build sendiri
 
