@@ -1,66 +1,77 @@
-# Config
+# Panduan Konfigurasi YTRVX
 
-Adding another revanced app is as easy as this:
-```toml
-[Some-App]
-apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
-# or uptodown-dlurl = "https://app.en.uptodown.com/android"
-```
+File [`config.toml`](config.toml) menentukan aplikasi, versi, dan jenis file yang akan dibangun. Ubah sedikit demi sedikit, lalu jalankan workflow build untuk memeriksa hasilnya.
 
-> [!WARNING]
-> When a patch name itself contains a single quote, double it inside the string (e.g. 'Hide ''Get Music Premium''').
+## Mulai cepat
 
-## More about other options:
+1. Simpan salinan `config.toml` sebelum mengubahnya.
+2. Ubah opsi yang diperlukan.
+3. Jalankan **Build Modules** dari GitHub Actions.
+4. Ambil hasil build dari Releases.
 
-There exists an example below with all defaults shown and all the keys explicitly set.  
-**All keys are optional** (except download urls) and are assigned to their default values if not set explicitly.  
+Contoh aplikasi baru:
 
 ```toml
-parallel-jobs = 1                    # amount of cores to use for parallel patching, if not set $(nproc) is used
-compression-level = 9                # module zip compression level
-remove-rv-integrations-checks = false # keep false for Morphe .mpp bundles; this only rewrites ReVanced integrations
-dpi = "nodpi anydpi 120-640dpi"      # dpi packages to be searched in order. default: "nodpi anydpi"
-
-patches-source = "MorpheApp/morphe-patches" # where to fetch patches bundle from. default: "MorpheApp/morphe-patches"
-cli-source = "MorpheApp/morphe-desktop"     # where to fetch CLI from. default: "MorpheApp/morphe-desktop"
-# options like cli-source can also set per app
-rv-brand = "YTRVX" # label used in the generated module and APK filenames. default: "YTRVX"
-module-author = "Naufal" # author shown in generated Magisk module metadata. default: "Naufal"
-
-patches-version = "v1.40.0" # 'latest', 'dev', or a version number. default: "latest"
-cli-version = "v1.14.0"     # 'latest', 'dev', or a version number. default: "latest"
-
-[Some-App]
-app-name = "SomeApp" # if set, release name becomes SomeApp instead of Some-App. default is same as table name, which is 'Some-App' here.
-enabled = true       # whether to build the app. default: true
-build-mode = "apk"   # 'both', 'apk' or 'module'. default: apk
-
-# 'auto' option gets the latest possible version supported by all the included patches
-# 'latest' gets the latest stable without checking patches support. 'beta' gets the latest beta/alpha
-# whitespace seperated list of patches to exclude. default: ""
-version = "auto"     # 'auto', 'latest', 'beta' or a version number (e.g. '17.40.41'). default: auto
-
-# optional args to be passed to cli. can be used to set patch options
-# multiline strings in the config is supported
-patcher-args = """\
-  -OdarkThemeBackgroundColor=#FF0F0F0F \
-  -Oanother-option=value \
-  """
-
-excluded-patches = """\
-  'Some Patch' \
-  'Some Other Patch' \
-  """
-
-included-patches = "'Some Patch'"                          # whitespace seperated list of non-default patches to include. default: ""
-include-stock = true                                       # includes stock apk in the module. default: true
-exclusive-patches = false                                  # exclude all patches by default. default: false
-apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
-uptodown-dlurl = "https://spotify.en.uptodown.com/android"
-module-prop-name = "some-app-magisk"                       # magisk module prop name.
-module-author = "Naufal"                                    # overrides the global module author for this app.
-dpi = "360-480dpi"                               # used to select apk variant from apkmirror. default: nodpi
-arch = "arm64-v8a"                                         # 'arm64-v8a', 'arm-v7a', 'all', 'both'. 'both' downloads both arm64-v8a and arm-v7a. default: all
-riplib = true                                              # enables ripping x86 and x86_64 libs from apks with j-hc revanced cli. default: true
-
+[Aplikasi-Baru]
+enabled = false
+app-name = "Nama Aplikasi"
+build-mode = "apk"
+version = "auto"
+arch = "all"
+uptodown-dlurl = "https://contoh.en.uptodown.com/android"
 ```
+
+Set `enabled = true` hanya ketika aplikasi dan sumber APK sudah benar.
+
+## Opsi umum
+
+| Opsi | Fungsi |
+| --- | --- |
+| `enable-magisk-update` | Membuat modul Magisk memeriksa pembaruan dari repository ini. |
+| `parallel-jobs` | Jumlah proses patch yang berjalan bersamaan. Gunakan `1` untuk build yang lebih ringan. |
+| `module-author` | Nama pembuat yang muncul pada metadata modul. |
+| `rv-brand` | Nama brand pada file hasil build. Gunakan `YTRVX`. |
+| `patches-source` / `patches-version` | Sumber dan versi Morphe Patches. |
+| `cli-source` / `cli-version` | Sumber dan versi Morphe Desktop. |
+| `dpi` | Urutan DPI yang dicari saat memilih APK. |
+| `compression-level` | Kompresi ZIP modul, dari `0` sampai `9`. |
+| `remove-rv-integrations-checks` | Biarkan `false` untuk bundle Morphe `.mpp`. |
+
+Versi patcher dapat berupa nomor versi, `latest`, atau `dev`. Konfigurasi YTRVX menggunakan nomor versi agar hasil build lebih mudah diulang.
+
+## Opsi per aplikasi
+
+| Opsi | Fungsi |
+| --- | --- |
+| `enabled` | Mengikutkan aplikasi dalam build. |
+| `app-name` | Nama aplikasi pada hasil build. |
+| `build-mode` | `apk`, `module`, atau `both`. |
+| `version` | Versi aplikasi: nomor versi, `auto`, `latest`, atau `beta`. |
+| `arch` | `all`, `arm64-v8a`, `arm-v7a`, atau `both`. |
+| `uptodown-dlurl`, `apkmirror-dlurl`, `archive-dlurl` | Sumber unduhan APK. Minimal satu sumber diperlukan. |
+| `included-patches` / `excluded-patches` | Patch yang ingin ditambah atau dilewati. |
+| `patcher-args` | Opsi tambahan untuk Morphe Patcher. |
+| `module-prop-name` | ID modul Magisk. Jangan ubah pada modul yang sudah dipasang jika ingin mempertahankan jalur update. |
+
+## Contoh perubahan sederhana
+
+Untuk membuat hanya APK non-root YouTube, ubah tabel YouTube menjadi:
+
+```toml
+[YouTube-Extended]
+enabled = true
+build-mode = "apk"
+```
+
+Untuk menonaktifkan aplikasi dari build, gunakan:
+
+```toml
+enabled = false
+```
+
+## Catatan patch
+
+- Nama patch yang mengandung tanda petik satu harus ditulis dua kali, misalnya `Hide ''Get Music Premium''`.
+- `auto` memilih versi tertinggi yang didukung oleh patch aktif.
+- `latest` dan `beta` tidak memeriksa kecocokan patch terlebih dahulu; gunakan hanya jika Anda siap menangani build yang gagal.
+- Detail CLI dan bundle `.mpp` tersedia di [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop) dan [Morphe Patches](https://github.com/MorpheApp/morphe-patches).
