@@ -1,5 +1,6 @@
 enable-magisk-update = true # set this to false if you do not want to receive updates for the module in magisk app
 parallel-jobs = 1
+module-author = "Naufal"
 # Morphe bundles use .mpp files, so do not apply the ReVanced integrations rewrite.
 remove-rv-integrations-checks = false
 
