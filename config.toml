@@ -1,31 +1,31 @@
 enable-magisk-update = true # set this to false if you do not want to receive updates for the module in magisk app
 parallel-jobs = 1
+# Morphe bundles use .mpp files, so do not apply the ReVanced integrations rewrite.
+remove-rv-integrations-checks = false
 
 [Music-Extended]
 enabled = true
 app-name = "Music"
-patches-source = "anddea/revanced-patches"
-patches-version = "latest"
-cli-source = "inotia00/revanced-cli"
-integrations-source = "inotia00/revanced-integrations"
-cli-version = "latest"
-integrations-version = "latest"
-rv-brand = "ReVanced Extended" 
+patches-source = "MorpheApp/morphe-patches"
+patches-version = "v1.40.0"
+cli-source = "MorpheApp/morphe-desktop"
+cli-version = "v1.14.0"
+rv-brand = "YTRVX"
 build-mode = "both"
 arch = "both"
+version = "9.15.51"
 uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.youtube.music"
 
 [YouTube-Extended]
 enabled = true
 app-name = "YouTube"
-patches-source = "anddea/revanced-patches"
-patches-version = "latest"
-cli-source = "inotia00/revanced-cli"
-integrations-source = "inotia00/revanced-integrations"
-cli-version = "latest"
-integrations-version = "latest"
-rv-brand = "ReVanced Extended"
+patches-source = "MorpheApp/morphe-patches"
+patches-version = "v1.40.0"
+cli-source = "MorpheApp/morphe-desktop"
+cli-version = "v1.14.0"
+rv-brand = "YTRVX"
 build-mode = "both"
+version = "21.04.223"
 uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"

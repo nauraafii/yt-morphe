@@ -18,16 +18,16 @@ There exists an example below with all defaults shown and all the keys explicitl
 ```toml
 parallel-jobs = 1                    # amount of cores to use for parallel patching, if not set $(nproc) is used
 compression-level = 9                # module zip compression level
-remove-rv-integrations-checks = true # remove checks from the revanced integrations
+remove-rv-integrations-checks = false # keep false for Morphe .mpp bundles; this only rewrites ReVanced integrations
 dpi = "nodpi anydpi 120-640dpi"      # dpi packages to be searched in order. default: "nodpi anydpi"
 
-patches-source = "revanced/revanced-patches" # where to fetch patches bundle from. default: "revanced/revanced-patches"
-cli-source = "j-hc/revanced-cli"             # where to fetch cli from. default: "j-hc/revanced-cli"
+patches-source = "MorpheApp/morphe-patches" # where to fetch patches bundle from. default: "MorpheApp/morphe-patches"
+cli-source = "MorpheApp/morphe-desktop"     # where to fetch CLI from. default: "MorpheApp/morphe-desktop"
 # options like cli-source can also set per app
-rv-brand = "ReVanced Extended" # rebrand from 'ReVanced' to something different. default: "ReVanced"
+rv-brand = "YTRVX" # label used in the generated module and APK filenames. default: "YTRVX"
 
-patches-version = "v2.160.0" # 'latest', 'dev', or a version number. default: "latest"
-cli-version = "v5.0.0"       # 'latest', 'dev', or a version number. default: "latest"
+patches-version = "v1.40.0" # 'latest', 'dev', or a version number. default: "latest"
+cli-version = "v1.14.0"     # 'latest', 'dev', or a version number. default: "latest"
 
 [Some-App]
 app-name = "SomeApp" # if set, release name becomes SomeApp instead of Some-App. default is same as table name, which is 'Some-App' here.

@@ -12,7 +12,13 @@ fi
 source utils.sh
 
 jq --version >/dev/null || abort "\`jq\` is not installed. install it with 'apt install jq' or equivalent"
-java --version >/dev/null || abort "\`openjdk 17\` is not installed. install it with 'apt install openjdk-17-jre' or equivalent"
+JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ { print $2; exit }') || abort "\`java\` is not installed. install OpenJDK 21 or equivalent"
+JAVA_MAJOR=${JAVA_VERSION%%.*}
+if [ "$JAVA_MAJOR" = 1 ]; then JAVA_MAJOR=${JAVA_VERSION#1.}; JAVA_MAJOR=${JAVA_MAJOR%%.*}; fi
+case "$JAVA_MAJOR" in
+    ''|*[!0-9]*) abort "could not determine the installed Java version" ;;
+esac
+if ((JAVA_MAJOR < 21)); then abort "Morphe Desktop requires OpenJDK 21 or newer (found ${JAVA_VERSION})"; fi
 zip --version >/dev/null || abort "\`zip\` is not installed. install it with 'apt install zip' or equivalent"
 
 set_prebuilts
@@ -26,12 +32,12 @@ COMPRESSION_LEVEL=$(toml_get "$main_config_t" compression-level) || COMPRESSION_
 if ! PARALLEL_JOBS=$(toml_get "$main_config_t" parallel-jobs); then
 	if [ "$OS" = Android ]; then PARALLEL_JOBS=1; else PARALLEL_JOBS=$(nproc); fi
 fi
-REMOVE_RV_INTEGRATIONS_CHECKS=$(toml_get "$main_config_t" remove-rv-integrations-checks) || REMOVE_RV_INTEGRATIONS_CHECKS="true"
+REMOVE_RV_INTEGRATIONS_CHECKS=$(toml_get "$main_config_t" remove-rv-integrations-checks) || REMOVE_RV_INTEGRATIONS_CHECKS="false"
 DEF_PATCHES_VER=$(toml_get "$main_config_t" patches-version) || DEF_PATCHES_VER="latest"
 DEF_CLI_VER=$(toml_get "$main_config_t" cli-version) || DEF_CLI_VER="latest"
-DEF_PATCHES_SRC=$(toml_get "$main_config_t" patches-source) || DEF_PATCHES_SRC="ReVanced/revanced-patches"
-DEF_CLI_SRC=$(toml_get "$main_config_t" cli-source) || DEF_CLI_SRC="j-hc/revanced-cli"
-DEF_RV_BRAND=$(toml_get "$main_config_t" rv-brand) || DEF_RV_BRAND="ReVanced"
+DEF_PATCHES_SRC=$(toml_get "$main_config_t" patches-source) || DEF_PATCHES_SRC="MorpheApp/morphe-patches"
+DEF_CLI_SRC=$(toml_get "$main_config_t" cli-source) || DEF_CLI_SRC="MorpheApp/morphe-desktop"
+DEF_RV_BRAND=$(toml_get "$main_config_t" rv-brand) || DEF_RV_BRAND="YTRVX"
 DEF_DPI_LIST=$(toml_get "$main_config_t" dpi) || DEF_DPI_LIST="nodpi anydpi"
 mkdir -p "$TEMP_DIR" "$BUILD_DIR"
 
