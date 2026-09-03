@@ -4,9 +4,9 @@
 [![Latest release](https://img.shields.io/github/v/release/nauraafii/ytrvx-module?label=release)](https://github.com/nauraafii/ytrvx-module/releases/latest)
 [![License](https://img.shields.io/github/license/nauraafii/ytrvx-module)](LICENSE)
 
-YTRVX adalah fork pribadi yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU, lalu menerbitkannya sebagai GitHub Release.
+YTRVX adalah fork pribadi yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU.
 
-> YTRVX bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc. Proyek ini memakai brand sendiri dan tetap bergantung pada kompatibilitas aplikasi sumber serta patch upstream.
+> YTRVX bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc.
 
 ## Cara kerja
 
@@ -61,7 +61,6 @@ Workflow manual ini adalah workflow rilis: ia membutuhkan signing secret dan dap
 
 - Kompatibilitas tidak dijamin. Versi aplikasi yang didukung berubah mengikuti [daftar patch Morphe](https://github.com/MorpheApp/morphe-patches#-patches-list).
 - Masalah pada patch tertentu, GmsCore, atau aplikasi upstream sebaiknya ditelusuri terlebih dahulu ke dokumentasi dan issue tracker upstream. Issue YTRVX relevan untuk builder, konfigurasi repository, workflow, atau asset rilisnya.
-- Jangan menyimpan keystore, password, token, atau APK hasil build di Git. Pola file sensitif sudah diabaikan melalui [`.gitignore`](.gitignore), tetapi tanggung jawab penyimpanan secret tetap ada pada pemilik repository.
 
 ## Referensi upstream
 
@@ -70,7 +69,3 @@ Workflow manual ini adalah workflow rilis: ia membutuhkan signing secret dan dap
 - [MicroG-RE](https://github.com/MorpheApp/MicroG-RE): implementasi GmsCore yang digunakan oleh aplikasi hasil patch non-root.
 - [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module): dasar builder dan template modul.
 - [GitHub Docs — manually running a workflow](https://docs.github.com/actions/managing-workflow-runs/manually-running-a-workflow): cara menjalankan workflow secara manual.
-
-## Lisensi
-
-Kode repository ini dilisensikan di bawah [GPL-3.0](LICENSE). Lisensi, notifikasi, dan batasan branding dari setiap dependency/upstream tetap berlaku secara terpisah.
