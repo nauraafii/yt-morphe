@@ -4,9 +4,15 @@
 [![Latest release](https://img.shields.io/github/v/release/nauraafii/ytrvx-module?label=release)](https://github.com/nauraafii/ytrvx-module/releases/latest)
 [![License](https://img.shields.io/github/license/nauraafii/ytrvx-module)](LICENSE)
 
-YTRVX adalah fork pribadi yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU.
+YTRVX adalah fork pribadi dari [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU.
 
 > YTRVX bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc.
+
+## Asal proyek dan scope perubahan
+
+YTRVX dibuat dari fork `j-hc/revanced-magisk-module` untuk penggunaan pribadi. Saya hanya menyesuaikan konfigurasi build—seperti aplikasi, versi, arsitektur, dan mode build—sesuai preferensi pribadi.
+
+Project ini bukan patcher baru dan tidak bertujuan menggantikan upstream. Untuk perubahan inti builder, template modul, atau masalah umum patching, rujuk ke [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) dan dokumentasi upstream terkait.
 
 ## Cara kerja
 
