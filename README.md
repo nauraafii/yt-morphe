@@ -12,7 +12,7 @@ YTRVX adalah fork pribadi dari [j-hc/revanced-magisk-module](https://github.com/
 
 YTRVX dibuat dari fork `j-hc/revanced-magisk-module` untuk penggunaan pribadi. Saya hanya menyesuaikan konfigurasi build—seperti aplikasi, versi, arsitektur, dan mode build—sesuai preferensi pribadi.
 
-Project ini bukan patcher baru dan tidak bertujuan menggantikan upstream. Untuk perubahan inti builder, template modul, atau masalah umum patching, rujuk ke [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) dan dokumentasi upstream terkait.
+Project ini bukan patcher baru dan tidak bertujuan menggantikan upstream. Untuk perubahan inti builder, template modul, atau masalah umum patching, bisa langsung ke [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) dan dokumentasi upstream terkait.
 
 ## Cara kerja
 
@@ -28,7 +28,7 @@ APK non-root / modul ZIP
 GitHub Release + catatan build + SHA256SUMS.txt
 ```
 
-| Komponen | Tanggung jawab |
+| Komponen | Keterangan |
 | --- | --- |
 | [`config.toml`](config.toml) | Input build yang dipin per aplikasi. |
 | [`build.sh`](build.sh) dan [`utils.sh`](utils.sh) | Mengunduh input, menjalankan patcher, menandatangani APK, dan membuat modul. |
