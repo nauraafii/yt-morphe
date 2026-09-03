@@ -35,7 +35,7 @@ Ambil file hanya dari [Latest release](https://github.com/nauraafii/ytrvx-module
 
 | Kebutuhan | Pilih file | Catatan |
 | --- | --- | --- |
-| Perangkat tanpa root | Berkas `.apk` | Memerlukan implementasi GmsCore yang sesuai untuk login Google. [MicroG-RE](https://github.com/MorpheApp/MicroG-RE/releases) adalah upstream yang dirujuk Morphe. |
+| Perangkat tanpa root | Berkas `.apk` | Memerlukan implementasi GmsCore yang sesuai untuk login Google. Pakai [MicroG](https://github.com/ReVanced/GmsCore/releases) atau [MicroG-RE](https://github.com/MorpheApp/MicroG-RE/releases) |
 | Perangkat dengan root | Berkas `-magisk-*.zip` | Pasang melalui manager root yang mendukung modul Magisk/KernelSU. |
 | Kompatibilitas ABI | Nama berakhiran `all`, `arm64-v8a`, atau `arm-v7a` | `all` adalah build multi-ABI; `both` pada konfigurasi menghasilkan dua asset ABI terpisah. |
 
