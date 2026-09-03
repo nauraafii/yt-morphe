@@ -1,35 +1,76 @@
 # YTRVX
 
-[![Build Status](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml/badge.svg)](https://github.com/nauraafii/ytrvx-module/actions)
-[![Latest Release](https://img.shields.io/github/v/release/nauraafii/ytrvx-module?label=Latest%20Release&color=blue)](https://github.com/nauraafii/ytrvx-module/releases/latest)
+[![Build Modules](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml/badge.svg)](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml)
+[![Latest release](https://img.shields.io/github/v/release/nauraafii/ytrvx-module?label=release)](https://github.com/nauraafii/ytrvx-module/releases/latest)
+[![License](https://img.shields.io/github/license/nauraafii/ytrvx-module)](LICENSE)
 
-YTRVX adalah fork pribadi untuk membangun YouTube dan YouTube Music yang sudah dipatch. Repository ini membuat APK non-root serta modul ZIP untuk Magisk dan KernelSU dengan Morphe Patches.
+YTRVX adalah fork pribadi yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU, lalu menerbitkannya sebagai GitHub Release.
 
-## Unduh
+> YTRVX bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc. Proyek ini memakai brand sendiri dan tetap bergantung pada kompatibilitas aplikasi sumber serta patch upstream.
 
-Ambil file terbaru di [Releases](https://github.com/nauraafii/ytrvx-module/releases/latest).
+## Cara kerja
 
-- **APK**: untuk perangkat tanpa root. Pasang seperti APK biasa. Login Google memerlukan GmsCore yang kompatibel.
-- **ZIP Magisk/KernelSU**: untuk perangkat root. Pasang melalui aplikasi root manager yang digunakan.
-- Pilih file sesuai arsitektur perangkat. File dengan nama `all` mendukung beberapa arsitektur.
+```text
+config.toml
+    │
+    ├── memilih aplikasi, versi, arsitektur, dan mode build
+    ▼
+Morphe Desktop + Morphe Patches
+    ▼
+APK non-root / modul ZIP
+    ▼
+GitHub Release + catatan build + SHA256SUMS.txt
+```
 
-## Build sendiri
+| Komponen | Tanggung jawab |
+| --- | --- |
+| [`config.toml`](config.toml) | Input build yang dipin per aplikasi. |
+| [`build.sh`](build.sh) dan [`utils.sh`](utils.sh) | Mengunduh input, menjalankan patcher, menandatangani APK, dan membuat modul. |
+| [Build Modules](.github/workflows/build.yml) | Build rilis manual dan penerbitan asset GitHub Release. |
+| [CI](.github/workflows/ci.yml) | Pemeriksaan terjadwal atas perubahan input upstream sebelum memicu build. |
 
-1. Ubah [`config.toml`](config.toml) sesuai kebutuhan.
-2. Buka [GitHub Actions](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml).
-3. Pilih **Run workflow** pada branch `main`.
-4. Setelah selesai, ambil hasilnya dari halaman Releases.
+## Unduh dan pasang
 
-Untuk build lokal, gunakan Java 21 atau lebih baru dan siapkan keystore milik sendiri melalui variabel `YTRVX_KEYSTORE_PATH` dan `YTRVX_KEYSTORE_PASSWORD`. Jangan simpan keystore atau kata sandi di repository. Panduan opsi tersedia di [CONFIG.md](CONFIG.md).
+Ambil file hanya dari [Latest release](https://github.com/nauraafii/ytrvx-module/releases/latest).
 
-## Catatan
+| Kebutuhan | Pilih file | Catatan |
+| --- | --- | --- |
+| Perangkat tanpa root | Berkas `.apk` | Memerlukan implementasi GmsCore yang sesuai untuk login Google. [MicroG-RE](https://github.com/MorpheApp/MicroG-RE/releases) adalah upstream yang dirujuk Morphe. |
+| Perangkat dengan root | Berkas `-magisk-*.zip` | Pasang melalui manager root yang mendukung modul Magisk/KernelSU. |
+| Kompatibilitas ABI | Nama berakhiran `all`, `arm64-v8a`, atau `arm-v7a` | `all` adalah build multi-ABI; `both` pada konfigurasi menghasilkan dua asset ABI terpisah. |
 
-- YTRVX adalah proyek pribadi dan bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc.
-- Kompatibilitas dapat berubah ketika aplikasi sumber atau patch diperbarui.
-- Android tidak mengizinkan APK dengan signature berbeda dipasang menimpa aplikasi yang sudah ada. Bila itu terjadi, uninstall APK YTRVX lama dahulu lalu instal ulang; data aplikasi dapat ikut terhapus.
+Sebelum memasang:
 
-## Kredit
+1. Cocokkan nama aplikasi, versi, dan ABI dengan perangkat serta kebutuhan Anda.
+2. Jika rilis menyediakan `SHA256SUMS.txt`, bandingkan hash SHA-256 file yang diunduh dengan entri nama file yang sama. Di PowerShell gunakan `Get-FileHash .\nama-file.apk -Algorithm SHA256`; di Linux/Termux gunakan `sha256sum nama-file.apk`.
+3. APK dengan signature berbeda tidak dapat menggantikan pemasangan yang sudah ada. Uninstall APK yang konflik hanya setelah mencadangkan data yang diperlukan, karena data aplikasi dapat ikut terhapus.
 
-- Builder dasar: [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module)
-- Patch: [Morphe Patches](https://github.com/MorpheApp/morphe-patches)
-- Patcher: [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop)
+## Build dan konfigurasi
+
+Konfigurasi harian dijelaskan di [CONFIG.md](CONFIG.md). Panduan build lokal, signing key, secret GitHub Actions, dan helper Termux tersedia di [BUILDING.md](BUILDING.md).
+
+Untuk membuat rilis dari GitHub Actions:
+
+1. Review perubahan pada [`config.toml`](config.toml), terutama versi aplikasi dan versi bundle patch.
+2. Buka workflow [Build Modules](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml), pilih branch `main`, lalu jalankan **Run workflow**.
+3. Tinjau log build dan asset pada halaman Release sebelum dibagikan.
+
+Workflow manual ini adalah workflow rilis: ia membutuhkan signing secret dan dapat membuat atau memperbarui GitHub Release. Gunakan branch `main` yang sudah direview, bukan sebagai lingkungan eksperimen.
+
+## Batasan dan dukungan
+
+- Kompatibilitas tidak dijamin. Versi aplikasi yang didukung berubah mengikuti [daftar patch Morphe](https://github.com/MorpheApp/morphe-patches#-patches-list).
+- Masalah pada patch tertentu, GmsCore, atau aplikasi upstream sebaiknya ditelusuri terlebih dahulu ke dokumentasi dan issue tracker upstream. Issue YTRVX relevan untuk builder, konfigurasi repository, workflow, atau asset rilisnya.
+- Jangan menyimpan keystore, password, token, atau APK hasil build di Git. Pola file sensitif sudah diabaikan melalui [`.gitignore`](.gitignore), tetapi tanggung jawab penyimpanan secret tetap ada pada pemilik repository.
+
+## Referensi upstream
+
+- [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop): CLI/GUI patcher, kebutuhan Java 21+, dan format input patch.
+- [Morphe Patches](https://github.com/MorpheApp/morphe-patches): bundle patch serta daftar aplikasi dan versi yang didukung.
+- [MicroG-RE](https://github.com/MorpheApp/MicroG-RE): implementasi GmsCore yang digunakan oleh aplikasi hasil patch non-root.
+- [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module): dasar builder dan template modul.
+- [GitHub Docs — manually running a workflow](https://docs.github.com/actions/managing-workflow-runs/manually-running-a-workflow): cara menjalankan workflow secara manual.
+
+## Lisensi
+
+Kode repository ini dilisensikan di bawah [GPL-3.0](LICENSE). Lisensi, notifikasi, dan batasan branding dari setiap dependency/upstream tetap berlaku secara terpisah.

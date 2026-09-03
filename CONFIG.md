@@ -1,81 +1,93 @@
-# Panduan Konfigurasi YTRVX
+# Konfigurasi YTRVX
 
-File [`config.toml`](config.toml) menentukan aplikasi, versi, dan jenis file yang akan dibangun. Ubah sedikit demi sedikit, lalu jalankan workflow build untuk memeriksa hasilnya.
+[`config.toml`](config.toml) adalah kontrak build YTRVX: ia menentukan aplikasi sumber, bundle patch, versi, ABI, dan jenis output. Builder membaca nilai global lebih dahulu, lalu nilai dalam tabel aplikasi; nilai per aplikasi akan menggantikan nilai global yang sama.
 
-## Mulai cepat
+Gunakan [BUILDING.md](BUILDING.md) untuk lingkungan build dan signing. Dokumentasi ini hanya menjelaskan konfigurasi.
 
-1. Simpan salinan `config.toml` sebelum mengubahnya.
-2. Ubah opsi yang diperlukan.
-3. Jalankan **Build Modules** dari GitHub Actions.
-4. Ambil hasil build dari Releases.
+## Alur perubahan yang aman
 
-Contoh aplikasi baru:
+1. Buat branch dan salin `config.toml` sebelum mengubah nilai.
+2. Ubah satu kelompok kecil nilai, misalnya hanya `version` atau `build-mode`.
+3. Untuk perubahan patch kustom, tetapkan versi aplikasi yang eksplisit dan cek [supported versions upstream](https://github.com/MorpheApp/morphe-patches#-patches-list).
+4. Jalankan build, baca `build.md` dan log workflow, lalu uji asset pada perangkat yang sesuai.
+5. Baru gunakan konfigurasi tersebut untuk rilis berikutnya.
 
-```toml
-[Aplikasi-Baru]
-enabled = false
-app-name = "Nama Aplikasi"
-build-mode = "apk"
-version = "auto"
-arch = "all"
-uptodown-dlurl = "https://contoh.en.uptodown.com/android"
-```
+## Nilai global
 
-Set `enabled = true` hanya ketika aplikasi dan sumber APK sudah benar.
+Nilai ini dapat ditaruh di bagian paling atas `config.toml` dan menjadi default untuk semua tabel aplikasi.
 
-## Opsi umum
+| Opsi | Nilai / perilaku | Kapan diubah |
+| --- | --- | --- |
+| `enable-magisk-update` | `true` atau `false`. Saat build GitHub, URL update modul dibuat dari repository ini. Build lokal menonaktifkannya. | Matikan bila fork tidak ingin modul mengecek update. |
+| `parallel-jobs` | Jumlah build paralel. | Gunakan `1` pada perangkat atau runner dengan RAM terbatas. |
+| `module-author` | Nama pada metadata modul. | Untuk branding fork sendiri. |
+| `rv-brand` | Brand pada nama output dan metadata. | Pertahankan brand yang berbeda dari upstream. |
+| `patches-source` / `patches-version` | Repository dan tag/ref bundle Morphe `.mpp`. | Pin ke tag yang sudah Anda review; hindari bergerak ke `latest` tanpa pengujian. |
+| `cli-source` / `cli-version` | Repository dan tag/ref JAR Morphe Desktop. | Ubah bersamaan dengan review kompatibilitas bundle patch. |
+| `dpi` | Urutan DPI yang dicoba saat mengambil APK dari sumber tertentu. | Hanya bila sumber APK menyediakan varian DPI berbeda. |
+| `compression-level` | Tingkat ZIP `0`–`9`. | Turunkan untuk build lebih cepat, naikkan untuk ZIP lebih kecil. |
+| `remove-rv-integrations-checks` | Harus `false` untuk bundle Morphe `.mpp` yang dipakai fork ini. | Jangan aktifkan kecuali kode builder dan format bundle sudah berubah serta diuji. |
 
-| Opsi | Fungsi |
-| --- | --- |
-| `enable-magisk-update` | Membuat modul Magisk memeriksa pembaruan dari repository ini. |
-| `parallel-jobs` | Jumlah proses patch yang berjalan bersamaan. Gunakan `1` untuk build yang lebih ringan. |
-| `module-author` | Nama pembuat yang muncul pada metadata modul. |
-| `rv-brand` | Nama brand pada file hasil build. Gunakan `YTRVX`. |
-| `patches-source` / `patches-version` | Sumber dan versi Morphe Patches. |
-| `cli-source` / `cli-version` | Sumber dan versi Morphe Desktop. |
-| `dpi` | Urutan DPI yang dicari saat memilih APK. |
-| `compression-level` | Kompresi ZIP modul, dari `0` sampai `9`. |
-| `remove-rv-integrations-checks` | Biarkan `false` untuk bundle Morphe `.mpp`. |
+## Nilai per aplikasi
 
-Versi patcher dapat berupa nomor versi, `latest`, atau `dev`. Konfigurasi YTRVX menggunakan nomor versi agar hasil build lebih mudah diulang.
+Setiap blok seperti `[YouTube-Extended]` atau `[Music-Extended]` adalah satu target build.
 
-## Opsi per aplikasi
+| Opsi | Nilai / perilaku | Catatan penting |
+| --- | --- | --- |
+| `enabled` | `true` atau `false`. | Hanya target aktif yang dibangun. |
+| `app-name` | Nama yang dipakai pada output. | Tidak harus sama dengan nama tabel. |
+| `build-mode` | `apk`, `module`, atau `both`. | `apk` untuk non-root; `module` untuk ZIP root; `both` membuat keduanya. |
+| `version` | Versi eksplisit, `auto`, `latest`, atau `beta`. | Lihat bagian [Pemilihan versi](#pemilihan-versi). |
+| `arch` | `all`, `arm64-v8a`, `arm-v7a`, atau `both`. | `both` menjalankan dua build ABI terpisah; `all` meminta build multi-ABI. |
+| `uptodown-dlurl`, `apkmirror-dlurl`, `archive-dlurl` | URL sumber aplikasi. | Setidaknya satu diperlukan. Builder mencoba sumber yang tersedia bila satu sumber gagal. |
+| `included-patches` / `excluded-patches` | Daftar nama patch yang dipaksa aktif/nonaktif. | Nama patch harus diapit tanda kutip; gunakan versi aplikasi eksplisit. |
+| `exclusive-patches` | `true` hanya memakai patch yang dipilih. | Risiko tinggi: konfigurasi default yang diperlukan dapat tidak ikut. |
+| `include-stock` | Menyertakan APK stok ke ZIP modul; default `true`. | Lebih tahan untuk pemasangan modul, tetapi ZIP lebih besar. |
+| `module-author` | Override penulis khusus target. | Tidak mengubah target lain. |
+| `riplib` | `false` mematikan penghapusan library ABI. | Builder hanya menggunakan optimasi ini bila CLI mendukung `rip-lib`. |
+| `patcher-args` | Argumen tambahan yang diteruskan ke Morphe CLI. | Gunakan hanya setelah memeriksa dokumentasi CLI upstream. |
+| `module-prop-name` | ID modul Magisk. | Jangan ganti setelah modul dipasang bila ingin jalur update tetap sama. |
 
-| Opsi | Fungsi |
-| --- | --- |
-| `enabled` | Mengikutkan aplikasi dalam build. |
-| `app-name` | Nama aplikasi pada hasil build. |
-| `build-mode` | `apk`, `module`, atau `both`. |
-| `version` | Versi aplikasi: nomor versi, `auto`, `latest`, atau `beta`. |
-| `arch` | `all`, `arm64-v8a`, `arm-v7a`, atau `both`. |
-| `uptodown-dlurl`, `apkmirror-dlurl`, `archive-dlurl` | Sumber unduhan APK. Minimal satu sumber diperlukan. |
-| `included-patches` / `excluded-patches` | Patch yang ingin ditambah atau dilewati. Jika dipakai, tetapkan `version` secara eksplisit. |
-| `exclusive-patches` | Hanya memakai patch yang dipilih. Tetapkan `version` secara eksplisit. |
-| `include-stock` | Menyertakan APK stok ke ZIP modul. Lebih tahan saat instalasi, tetapi ukuran ZIP bertambah. |
-| `module-author` | Mengganti nama pembuat pada metadata modul tertentu. |
-| `riplib` | Menghapus library ABI yang tidak dipakai untuk mengurangi ukuran file. |
-| `patcher-args` | Opsi tambahan untuk Morphe Patcher. |
-| `module-prop-name` | ID modul Magisk. Jangan ubah pada modul yang sudah dipasang jika ingin mempertahankan jalur update. |
+## Pemilihan versi
 
-## Contoh perubahan sederhana
+| Nilai | Perilaku builder | Rekomendasi |
+| --- | --- | --- |
+| Versi eksplisit, misalnya `"21.04.223"` | Builder memaksa patcher menggunakan versi tersebut. | Pilihan paling dapat diulang untuk rilis. |
+| `auto` | Memilih versi tertinggi yang didukung patch default. | Aman untuk konfigurasi tanpa pilihan patch khusus. |
+| `latest` | Memilih versi stabil tertinggi dari sumber APK dan memaksa patching. | Hanya untuk eksperimen yang siap gagal bila belum kompatibel. |
+| `beta` | Memilih versi beta tertinggi dari sumber APK dan memaksa patching. | Paling berisiko; bukan pilihan rilis rutin. |
 
-Untuk membuat hanya APK non-root YouTube, ubah tabel YouTube menjadi:
+`auto` sengaja ditolak bila `included-patches`, `excluded-patches`, atau `exclusive-patches` dipakai. Setel versi eksplisit yang muncul dalam daftar supported versions upstream agar perubahan patch dapat direproduksi dan ditinjau.
+
+## Contoh minimal
+
+Contoh berikut membangun YouTube non-root saja, memakai versi eksplisit dan build multi-ABI:
 
 ```toml
 [YouTube-Extended]
 enabled = true
+app-name = "YouTube"
 build-mode = "apk"
+version = "21.04.223"
+arch = "all"
+patches-source = "MorpheApp/morphe-patches"
+patches-version = "v1.40.0"
+cli-source = "MorpheApp/morphe-desktop"
+cli-version = "v1.14.0"
+uptodown-dlurl = "https://youtube.en.uptodown.com/android"
+archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
 ```
 
-Untuk menonaktifkan aplikasi dari build, gunakan:
+Contoh ini hanya menunjukkan bentuk konfigurasi. Sebelum memakai versi atau tag baru, konfirmasikan bahwa kombinasi aplikasi dan patch masih didukung oleh [Morphe Patches](https://github.com/MorpheApp/morphe-patches).
 
-```toml
-enabled = false
-```
+## Patch kustom
 
-## Catatan patch
+Nama patch diteruskan ke CLI, sehingga ejaan harus persis seperti daftar patch upstream. Jika nama mengandung tanda petik tunggal, tulis dua kali di TOML, misalnya `Hide ''Get Music Premium''`.
 
-- Nama patch yang mengandung tanda petik satu harus ditulis dua kali, misalnya `Hide ''Get Music Premium''`.
-- `auto` memilih versi tertinggi yang didukung oleh patch default. Jika memilih atau mengecualikan patch sendiri, gunakan versi aplikasi yang eksplisit agar kompatibilitas tidak ditebak.
-- `latest` dan `beta` tidak memeriksa kecocokan patch terlebih dahulu; gunakan hanya jika Anda siap menangani build yang gagal.
-- Detail CLI dan bundle `.mpp` tersedia di [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop) dan [Morphe Patches](https://github.com/MorpheApp/morphe-patches).
+Mulai dari perubahan kecil: tetapkan satu patch, pin versi aplikasi dan bundle, build, lalu baca hasilnya. Jangan memasukkan atau mengecualikan patch GmsCore/microG secara manual; builder menentukan perlakuannya berbeda untuk mode non-root dan root.
+
+## Referensi
+
+- [Morphe Patches — daftar patch dan versi yang didukung](https://github.com/MorpheApp/morphe-patches#-patches-list)
+- [Morphe Desktop — CLI, JAR, dan dokumentasi](https://github.com/MorpheApp/morphe-desktop)
+- [Konfigurasi aktif di fork ini](config.toml)
