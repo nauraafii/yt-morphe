@@ -4,15 +4,15 @@
 [![Latest release](https://img.shields.io/github/v/release/nauraafii/ytrvx-module?label=release)](https://github.com/nauraafii/ytrvx-module/releases/latest)
 [![License](https://img.shields.io/github/license/nauraafii/ytrvx-module)](LICENSE)
 
-YTRVX adalah fork pribadi dari [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) yang mengotomatiskan build YouTube dan YouTube Music yang dipatch menggunakan Morphe Patches. Dari satu konfigurasi, repository ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU.
+YTRVX adalah fork personal dari [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) yang mengotomatiskan build YouTube dan YouTube Music dengan Morphe Patches. Dari satu konfigurasi, repositori ini menghasilkan APK non-root dan modul ZIP untuk Magisk atau KernelSU.
 
 > YTRVX bukan aplikasi resmi YouTube, Google, Morphe, atau j-hc.
 
-## Asal proyek dan scope perubahan
+## Asal proyek dan cakupan perubahan
 
-YTRVX dibuat dari fork `j-hc/revanced-magisk-module` untuk penggunaan pribadi. Saya hanya menyesuaikan konfigurasi build—seperti aplikasi, versi, arsitektur, dan mode build—sesuai preferensi pribadi.
+YTRVX dibuat untuk penggunaan pribadi. Perubahan saya berfokus pada konfigurasi build—seperti aplikasi, versi, arsitektur, dan mode build—serta dokumentasi dan penyesuaian workflow sederhana.
 
-Project ini bukan patcher baru dan tidak bertujuan menggantikan upstream. Untuk perubahan inti builder, template modul, atau masalah umum patching, bisa langsung ke [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) dan dokumentasi upstream terkait.
+Proyek ini bukan patcher baru dan tidak bertujuan menggantikan proyek asal. Untuk perubahan inti builder, template modul, atau masalah umum patching, lihat [j-hc/revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) dan dokumentasi upstream terkait.
 
 ## Cara kerja
 
@@ -30,10 +30,10 @@ GitHub Release + catatan build + SHA256SUMS.txt
 
 | Komponen | Keterangan |
 | --- | --- |
-| [`config.toml`](config.toml) | Input build yang dipin per aplikasi. |
+| [`config.toml`](config.toml) | Input build yang dikunci per aplikasi. |
 | [`build.sh`](build.sh) dan [`utils.sh`](utils.sh) | Mengunduh input, menjalankan patcher, menandatangani APK, dan membuat modul. |
 | [Build Modules](.github/workflows/build.yml) | Build rilis manual dan penerbitan asset GitHub Release. |
-| [CI](.github/workflows/ci.yml) | Pemeriksaan terjadwal atas perubahan input upstream sebelum memicu build. |
+| [CI](.github/workflows/ci.yml) | Pemeriksaan terjadwal atas perubahan input upstream sebelum menjalankan build. |
 
 ## Unduh dan pasang
 
@@ -61,12 +61,12 @@ Untuk membuat rilis dari GitHub Actions:
 2. Buka workflow [Build Modules](https://github.com/nauraafii/ytrvx-module/actions/workflows/build.yml), pilih branch `main`, lalu jalankan **Run workflow**.
 3. Tinjau log build dan asset pada halaman Release sebelum dibagikan.
 
-Workflow manual ini adalah workflow rilis: ia membutuhkan signing secret dan dapat membuat atau memperbarui GitHub Release. Gunakan branch `main` yang sudah direview, bukan sebagai lingkungan eksperimen.
+Workflow manual ini digunakan untuk rilis: prosesnya membutuhkan signing secret dan dapat membuat atau memperbarui GitHub Release. Gunakan branch `main` yang sudah ditinjau, bukan sebagai lingkungan eksperimen.
 
 ## Batasan dan dukungan
 
 - Kompatibilitas tidak dijamin. Versi aplikasi yang didukung berubah mengikuti [daftar patch Morphe](https://github.com/MorpheApp/morphe-patches#-patches-list).
-- Masalah pada patch tertentu, GmsCore, atau aplikasi upstream sebaiknya ditelusuri terlebih dahulu ke dokumentasi dan issue tracker upstream. Issue YTRVX relevan untuk builder, konfigurasi repository, workflow, atau asset rilisnya.
+- Masalah pada patch tertentu, GmsCore, atau aplikasi upstream sebaiknya diperiksa lebih dulu melalui dokumentasi dan issue tracker upstream. Issue YTRVX digunakan untuk masalah builder, konfigurasi repositori, workflow, atau aset rilis.
 
 ## Referensi upstream
 

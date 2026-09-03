@@ -90,10 +90,10 @@ jobs:
           BUILD_LOG: ${{ steps.get_output.outputs.BUILD_LOG }}
         run: |
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "YTRVX" --notes "$BUILD_LOG"
+            gh release edit "$TAG" --title "YTRVX Build $TAG" --notes "$BUILD_LOG"
             gh release upload "$TAG" ./build/* --clobber
           else
-            gh release create "$TAG" ./build/* --title "YTRVX" --notes "$BUILD_LOG"
+            gh release create "$TAG" ./build/* --title "YTRVX Build $TAG" --notes "$BUILD_LOG"
           fi
 
       - name: Update changelog and Magisk update json
