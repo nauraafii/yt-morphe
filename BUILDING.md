@@ -1,6 +1,6 @@
 # Panduan Build YTRVX
 
-Dokumen ini untuk pemilik fork yang ingin mengubah konfigurasi atau membuat rilis sendiri. Untuk memilih asset rilis, lihat [README.md](README.md); untuk arti setiap opsi, lihat [CONFIG.md](CONFIG.md).
+Dokumen ini untuk pemilik fork yang ingin mengubah konfigurasi atau membuat rilis sendiri. Untuk memilih aset rilis, lihat [README.md](README.md); untuk arti setiap opsi, lihat [CONFIG.md](CONFIG.md).
 
 ## Pilih jalur build
 
@@ -12,16 +12,16 @@ Dokumen ini untuk pemilik fork yang ingin mengubah konfigurasi atau membuat rili
 
 ## Build rilis dengan GitHub Actions
 
-Workflow [`Build Modules`](.github/workflows/build.yml) menyiapkan Java 21, memanggil `build.sh`, membuat `SHA256SUMS.txt`, dan mengunggah seluruh asset ke GitHub Release.
+Workflow [`Build Modules`](.github/workflows/build.yml) menyiapkan Java 21, memanggil `build.sh`, membuat `SHA256SUMS.txt`, dan mengunggah seluruh aset ke GitHub Release.
 
-Sebelum menjalankannya, repository fork memerlukan dua secret:
+Sebelum menjalankannya, repositori fork memerlukan dua secret:
 
 | Secret | Isi | Digunakan untuk |
 | --- | --- | --- |
 | `YTRVX_KEYSTORE_B64` | Keystore PKCS#12 yang sudah di-Base64 | Signing APK pada runner GitHub. |
 | `YTRVX_KEYSTORE_PASSWORD` | Password keystore dan entry `ytrvx` | Membuka keystore saat signing. |
 
-Jangan menaruh nilai secret di `config.toml`, issue, log, commit, atau file yang diunggah. Setelah secret tersedia, jalankan workflow dari branch `main` dan periksa log serta asset release yang dibuat.
+Jangan menaruh nilai secret di `config.toml`, issue, log, commit, atau file yang diunggah. Setelah secret tersedia, jalankan workflow dari branch `main` dan periksa log serta aset rilis yang dibuat.
 
 ## Build lokal
 
@@ -50,13 +50,13 @@ export YTRVX_KEYSTORE_PASSWORD
 ./build.sh config.toml
 ```
 
-Hasil lokal ditulis ke direktori `build/`, yang sengaja diabaikan oleh Git. Simpan keystore di lokasi aman di luar repository jika memungkinkan. Jangan memakai keystore rilis orang lain: update Android harus mempertahankan identity signing yang sama.
+Hasil lokal ditulis ke direktori `build/`, yang sengaja diabaikan oleh Git. Simpan keystore di lokasi aman di luar repositori jika memungkinkan. Jangan memakai keystore rilis orang lain: pembaruan Android harus mempertahankan identitas penandatanganan yang sama.
 
 ## Menyiapkan keystore sendiri
 
 Builder memanggil Morphe dengan alias keystore `ytrvx`. Buat keystore PKCS#12 dengan alias tersebut, simpan password secara aman, lalu ubah `YTRVX_KEYSTORE_PATH` agar menunjuk ke file itu. Referensi sintaks dan opsi `keytool` tersedia di [dokumentasi Java](https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html).
 
-Keystore adalah identity rilis. Bila hilang atau diganti, Android menganggap APK baru memiliki signature berbeda; pengguna biasanya harus uninstall versi sebelumnya sebelum memasang versi baru.
+Keystore adalah identitas rilis. Bila hilang atau diganti, Android menganggap APK baru memiliki signature berbeda; pengguna biasanya harus menghapus pemasangan versi sebelumnya sebelum memasang versi baru.
 
 ## Helper Termux
 

@@ -1,39 +1,36 @@
 ---
-name: Bug report
-about: Report a problem with YTRVX builds, configuration, modules, or release assets.
+name: Laporan masalah
+about: Laporkan masalah build, konfigurasi, modul, atau aset rilis YTRVX.
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-Gunakan template ini untuk masalah builder, konfigurasi, workflow, modul, atau aset rilis YTRVX. Silakan tulis dalam bahasa Indonesia atau English.
-
-Use this template for YTRVX builder, configuration, workflow, module, or release asset issues. Indonesian and English are welcome.
+Gunakan template ini untuk masalah builder, konfigurasi, workflow, modul, atau aset rilis YTRVX. Laporan dalam bahasa Indonesia maupun Inggris diterima.
 
 Untuk masalah patch atau GmsCore, cek referensi upstream di [README](https://github.com/nauraafii/ytrvx-module#referensi-upstream) terlebih dahulu.
 
-## Masalah / Problem
+## Masalah
 
-<!-- Jelaskan hasil yang diharapkan dan yang terjadi. / Describe expected and actual behavior. -->
+<!-- Jelaskan hasil yang diharapkan dan yang terjadi. -->
 
-## Langkah reproduksi / Steps to reproduce
+## Langkah reproduksi
 
 1.
 2.
 3.
 
-## Lingkungan / Environment
+## Lingkungan
 
-- Release tag / commit:
-- Nama aset / Asset filename:
+- Tag rilis atau commit:
+- Nama aset:
 - Mode: APK / Magisk / KernelSU
-- Versi Android dan ABI / Android version and ABI (if relevant):
-- Versi patch dan CLI / Patch and CLI versions (for build issues):
+- Versi Android dan ABI (jika relevan):
+- Versi patch dan CLI (untuk masalah build):
 
-## Bukti / Evidence
+## Bukti
 
-<!-- Sertakan tautan workflow, potongan log error, atau screenshot yang relevan.
-Include a workflow link, relevant error log, or screenshot.
+<!-- Sertakan tautan workflow, potongan log error, atau tangkapan layar yang relevan.
 Hapus token, password, signing key, dan data pribadi sebelum mengirim.
-Remove tokens, passwords, signing keys, and personal data before submitting. -->
+-->

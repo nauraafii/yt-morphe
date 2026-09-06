@@ -8,8 +8,8 @@ Gunakan [BUILDING.md](BUILDING.md) untuk lingkungan build dan signing. Dokumenta
 
 1. Buat branch dan salin `config.toml` sebelum mengubah nilai.
 2. Ubah satu kelompok kecil nilai, misalnya hanya `version` atau `build-mode`.
-3. Untuk perubahan patch kustom, tetapkan versi aplikasi yang eksplisit dan cek [supported versions upstream](https://github.com/MorpheApp/morphe-patches#-patches-list).
-4. Jalankan build, baca `build.md` dan log workflow, lalu uji asset pada perangkat yang sesuai.
+3. Untuk perubahan patch kustom, tetapkan versi aplikasi yang eksplisit dan cek [versi yang didukung upstream](https://github.com/MorpheApp/morphe-patches#-patches-list).
+4. Jalankan build, baca `build.md` dan log workflow, lalu uji aset pada perangkat yang sesuai.
 5. Baru gunakan konfigurasi tersebut untuk rilis berikutnya.
 
 ## Nilai global
@@ -57,7 +57,7 @@ Setiap blok seperti `[YouTube-Extended]` atau `[Music-Extended]` adalah satu tar
 | `latest` | Memilih versi stabil tertinggi dari sumber APK dan memaksa patching. | Hanya untuk eksperimen yang siap gagal bila belum kompatibel. |
 | `beta` | Memilih versi beta tertinggi dari sumber APK dan memaksa patching. | Paling berisiko; bukan pilihan rilis rutin. |
 
-`auto` sengaja ditolak bila `included-patches`, `excluded-patches`, atau `exclusive-patches` dipakai. Setel versi eksplisit yang muncul dalam daftar supported versions upstream agar perubahan patch dapat direproduksi dan ditinjau.
+`auto` sengaja ditolak bila `included-patches`, `excluded-patches`, atau `exclusive-patches` dipakai. Setel versi eksplisit yang muncul dalam daftar versi yang didukung upstream agar perubahan patch dapat direproduksi dan ditinjau.
 
 ## Contoh minimal
 
